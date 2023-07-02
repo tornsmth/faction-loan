@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "composite": true,
+    "esModuleInterop": true,
+    "lib": ["ES2017", "DOM"],
+    "moduleResolution": "Node",
+    "strict": true,
+    "target": "ES6"
+  },
+  "include": ["src/**/*"]
+}
