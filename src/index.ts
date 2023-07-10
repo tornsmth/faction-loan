@@ -20,6 +20,7 @@ async function main() {
     writeFileSync("docs/data.json", JSON.stringify(data));
   } catch (err) {
     console.log("Error:", err);
+    process.exit(-1);
   }
 }
 
