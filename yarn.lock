@@ -351,6 +351,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:^16.3.1":
+  version: 16.3.1
+  resolution: "dotenv@npm:16.3.1"
+  checksum: 15d75e7279018f4bafd0ee9706593dd14455ddb71b3bcba9c52574460b7ccaf67d5cf8b2c08a5af1a9da6db36c956a04a1192b101ee102a3e0cf8817bbcf3dfd
+  languageName: node
+  linkType: hard
+
 "escape-string-regexp@npm:^4.0.0":
   version: 4.0.0
   resolution: "escape-string-regexp@npm:4.0.0"
@@ -472,6 +479,7 @@ __metadata:
   resolution: "faction-loan@workspace:."
   dependencies:
     "@types/node": ^18.14.2
+    dotenv: ^16.3.1
     eslint: ^8.34.0
     prettier: ^2.8.8
     ts-node: ^10.9.1
