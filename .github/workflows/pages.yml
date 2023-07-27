@@ -38,8 +38,8 @@ jobs:
         env:
           FEISHU_APP_ID: ${{ secrets.FEISHU_APP_ID }}
           FEISHU_APP_SECRET: ${{ secrets.FEISHU_APP_SECRET }}
-          LOAN_SPREADSHEET: ${{ vars.LOAN_SPREADSHEET }}
-          LOAN_SHEETS: ${{ vars.LOAN_SHEETS }}
+          LOAN_BITABLE: ${{ secrets.LOAN_BITABLE }}
+          LOAN_TABLE: ${{ secrets.LOAN_TABLE }}
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact

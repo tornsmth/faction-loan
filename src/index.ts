@@ -14,8 +14,8 @@ function requireEnv(name: string): string {
 
 const FEISHU_APP_ID = requireEnv('FEISHU_APP_ID');
 const FEISHU_APP_SECRET = requireEnv('FEISHU_APP_SECRET');
-const LOAN_SPREADSHEET = requireEnv('LOAN_SPREADSHEET');
-const LOAN_SHEETS = requireEnv('LOAN_SHEETS').split(',');
+const LOAN_BITABLE = requireEnv('LOAN_BITABLE');
+const LOAN_TABLE = requireEnv('LOAN_TABLE');
 
 const EXPIRATION = 3600 * 4; // 4 hours
 
@@ -24,7 +24,7 @@ async function main() {
 
   try {
     const accessToken = await getTenantAccessToken(FEISHU_APP_ID, FEISHU_APP_SECRET);
-    const loanData = await fetchLoan(LOAN_SPREADSHEET, LOAN_SHEETS, accessToken);
+    const loanData = await fetchLoan(LOAN_BITABLE, LOAN_TABLE, accessToken);
     console.log(`${Object.keys(loanData).length} entried loaded`);
     const now = Math.floor(new Date().getTime() / 1000);
     const data = {

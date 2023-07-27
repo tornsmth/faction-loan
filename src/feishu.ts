@@ -12,7 +12,7 @@ async function fetchFeishu(path: string, accessToken?: string, body?: object): P
     body: body !== undefined ? JSON.stringify(body) : undefined,
   });
   if (!rsp.ok) {
-    throw new Error('Feishu network error');
+    throw new Error(`Feishu network error on loading ${path} with code ${rsp.status}`);
   }
   const data = await rsp.json();
   if (data.code !== 0) {
@@ -61,4 +61,9 @@ export async function getSheetData(
     accessToken,
   );
   return data.data.valueRange.values;
+}
+
+export async function getBitableData(bitable: string, table: string, accessToken: string): Promise<Array<any>> {
+  const data = await fetchFeishu(`/open-apis/bitable/v1/apps/${bitable}/tables/${table}/records`, accessToken);
+  return data.data.items;
 }

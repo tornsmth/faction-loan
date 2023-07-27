@@ -1,48 +1,39 @@
-import { getSheetData } from './feishu';
+import { getBitableData } from './feishu';
 
-const NAME_COLUMN = 0;
+const UID_ROW = '数字ID';
+const AMOUNT_ROW = '贷款金额';
+const START_ROW = '放款日期';
+const PERIOD_ROW = '贷款期限';
 const MAX_LOAN_AMOUNT = 10e9; // 10b
+const MAX_PERIOD = 24; // 24 months
 
 export type LoanData = { [uid: string]: number };
 
-async function fetchLoanTable(spreadsheet: string, sheet: string, accessToken: string): Promise<object> {
-  const sheetData = await getSheetData(spreadsheet, sheet, accessToken);
-  let headerRow;
-  let amountColumn;
-  for (let i = 0; i < sheetData.length; i++) {
-    if (sheetData[i][NAME_COLUMN] === '游戏昵称+ID') {
-      for (let j = 0; j < sheetData[0].length; j++) {
-        const cell = sheetData[i][j];
-        if (typeof cell === 'string' && cell.startsWith('贷款金额(M)')) {
-          amountColumn = j;
-          break;
-        }
-      }
-      headerRow = i;
-      break;
-    }
-  }
-  if (headerRow === undefined || amountColumn === undefined) {
-    throw new Error(`Cannot find header in sheet ${sheet}`);
-  }
-
+export async function fetchLoan(bitable: string, table: string, accessToken: string): Promise<LoanData> {
+  const data = await getBitableData(bitable, table, accessToken);
   const loan: LoanData = {};
-  for (let i = headerRow + 1; i < sheetData.length; i++) {
-    const nameCell = sheetData[i][NAME_COLUMN];
-    const amountCell = sheetData[i][amountColumn];
-    if (typeof nameCell !== 'string' || typeof amountCell !== 'number') {
+  const now = new Date().getTime();
+  for (const record of data) {
+    const fields = record.fields;
+    const uid = fields[UID_ROW];
+    const amount = parseInt(fields[AMOUNT_ROW]) * 1e6;
+    const start = parseInt(fields[START_ROW]);
+    const period = parseInt(fields[PERIOD_ROW]);
+    if (typeof uid !== 'string' || isNaN(amount) || isNaN(start) || isNaN(period)) {
       continue;
     }
-    const match = nameCell.match(/\[(\d+)\]/);
-    const amount = amountCell * 1e6;
-    if (match && amount >= 0 && amount <= MAX_LOAN_AMOUNT) {
-      loan[match[1]] = amount;
+    if (amount < 0 || amount > MAX_LOAN_AMOUNT) {
+      continue;
     }
+    if (start >= now || period > MAX_PERIOD) {
+      continue;
+    }
+    const expiryDate = new Date(start);
+    expiryDate.setMonth(expiryDate.getMonth() + period);
+    if (expiryDate.getTime() < now) {
+      continue;
+    }
+    loan[uid] = amount;
   }
   return loan;
-}
-
-export async function fetchLoan(spreadsheet: string, sheets: Array<string>, accessToken: string): Promise<LoanData> {
-  const subLoans = await Promise.all(sheets.map((sheet) => fetchLoanTable(spreadsheet, sheet, accessToken)));
-  return Object.assign({}, ...subLoans);
 }
