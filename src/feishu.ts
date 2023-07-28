@@ -64,6 +64,18 @@ export async function getSheetData(
 }
 
 export async function getBitableData(bitable: string, table: string, accessToken: string): Promise<Array<any>> {
-  const data = await fetchFeishu(`/open-apis/bitable/v1/apps/${bitable}/tables/${table}/records`, accessToken);
-  return data.data.items;
+  const PAGE_SIZE = 500;
+  const PATH = `/open-apis/bitable/v1/apps/${bitable}/tables/${table}/records?page_size=${PAGE_SIZE}`;
+  const result = [];
+  let pageToken = '';
+  while (true) {
+    const data = await fetchFeishu(`${PATH}&page_token=${pageToken}`, accessToken);
+    result.push(...data.data.items);
+    if (data.data.has_more) {
+      pageToken = data.data.page_token;
+    } else {
+      break;
+    }
+  }
+  return result;
 }
