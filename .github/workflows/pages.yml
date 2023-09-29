@@ -5,9 +5,8 @@ on:
     - cron: '0 * * * *'
   workflow_dispatch:
 
-# Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
 permissions:
-  contents: read
+  contents: write
   pages: write
   id-token: write
 
@@ -49,3 +48,13 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v2
+      - name: Commit changes to data.json
+        uses: stefanzweifel/git-auto-commit-action@v4
+        with:
+          commit_message: Updated by GitHub Actions
+          branch: dirty
+          file_pattern: 'docs/data.json'
+          add_options: '-f'
+          push_options: '--force'
+          skip_dirty_check: true
+          create_branch: true
